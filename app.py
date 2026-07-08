@@ -5,6 +5,17 @@ from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
+# Enable CORS (Cross-Origin Resource Sharing) manually to allow the frontend
+# to communicate with the API when served from a different port (e.g., Live Server).
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, PUT, POST, DELETE, OPTIONS'
+    return response
+
+
+
 # Define the path to the JSON file where course data will be stored.
 # This places courses.json in the same directory as app.py.
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'courses.json')
@@ -66,6 +77,12 @@ def validate_date(date_string):
         return True
     except ValueError:
         return False
+
+# Handler for CORS Preflight OPTIONS requests
+@app.route('/api/courses', methods=['OPTIONS'])
+@app.route('/api/courses/<int:course_id>', methods=['OPTIONS'])
+def handle_options(course_id=None):
+    return '', 204
 
 # ==========================================
 # FRONTEND ROUTE
