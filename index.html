@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCraftHub: Your Learning Management Platform</title>
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #8B5CF6;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 1rem;
+        }
+
+        /* ===== STATS ROW ===== */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background-color: #16213e;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-box h3 {
+            font-size: 1.8rem;
+            color: #8B5CF6;
+        }
+
+        .stat-box p {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            background: #8B5CF6;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #7c3aed;
+        }
+
+        .btn-success {
+            background: #F59E0B;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-success:hover {
+            background: #d97706;
+        }
+
+        .btn-cancel {
+            background: #555;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        /* ===== ADD COURSE BUTTON ===== */
+        .add-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* ===== COURSE CARDS GRID ===== */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .course-card {
+            background-color: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #2a2a4a;
+        }
+
+        .course-card h3 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .course-card p {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status-not-started {
+            background-color: #333;
+            color: #aaa;
+        }
+
+        .status-in-progress {
+            background-color: #1e3a5f;
+            color: #60a5fa;
+        }
+
+        .status-completed {
+            background-color: #14532d;
+            color: #4ade80;
+        }
+
+        .card-date {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            grid-column: 1 / -1;
+        }
+
+        /* ===== MODAL (Pop-up Form) ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background-color: #16213e;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            background-color: #0f3460;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            display: none;
+            z-index: 200;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.success {
+            background-color: #10b981;
+        }
+
+        .toast.error {
+            background-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+        <h1>CodeCraftHub</h1>
+        <p>Your Learning Management Platform</p>
+    </div>
+
+    <!-- ===== STATS ROW ===== -->
+    <div class="stats">
+        <div class="stat-box">
+            <h3 id="statTotal">0</h3>
+            <p>Total Courses</p>
+        </div>
+        <div class="stat-box">
+            <h3 id="statNotStarted">0</h3>
+            <p>Not Started</p>
+        </div>
+        <div class="stat-box">
+            <h3 id="statInProgress">0</h3>
+            <p>In Progress</p>
+        </div>
+        <div class="stat-box">
+            <h3 id="statCompleted">0</h3>
+            <p>Completed</p>
+        </div>
+    </div>
+
+    <!-- ===== ADD BUTTON ===== -->
+    <div class="add-section">
+        <button class="btn-primary" onclick="openModal(false)">+ Add New Course</button>
+    </div>
+
+    <!-- ===== COURSE CARDS GRID ===== -->
+    <div class="courses-grid" id="coursesGrid">
+        <!-- Cards will be inserted here by JavaScript -->
+    </div>
+
+    <!-- ===== MODAL (Add/Edit Form) ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 id="modalTitle">Add New Course</h2>
+            <form id="courseForm" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="courseId">
+
+                <div class="form-group">
+                    <label for="courseName">Course Name</label>
+                    <input type="text" id="courseName" placeholder="e.g. Flask" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseDesc">Description</label>
+                    <textarea id="courseDesc" placeholder="What will you learn?" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseDate">Target Date</label>
+                    <input type="date" id="courseDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseStatus">Status</label>
+                    <select id="courseStatus" required>
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-success">Save Course</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        // API Base URL (change this if backend runs on a different port)
+        const API_URL = 'http://127.0.0.1:5000/api/courses';
+
+        // Track whether we are adding or editing
+        let isEditMode = false;
+
+        // ==========================================
+        // FETCH & DISPLAY COURSES
+        // ==========================================
+        async function fetchCourses() {
+            try {
+                const response = await fetch(API_URL);
+                const courses = await response.json();
+                renderCourses(courses);
+                updateStats(courses);
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+                showToast('Could not load courses. Is the server running?', 'error');
+            }
+        }
+
+        // Build course cards and add them to the page
+        function renderCourses(courses) {
+            const grid = document.getElementById('coursesGrid');
+            grid.innerHTML = '';  // Clear old cards
+
+            if (courses.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><p>No courses yet. Click "+ Add New Course" to get started!</p></div>';
+                return;
+            }
+
+            courses.forEach(function(course) {
+                // Pick CSS class based on status
+                let badgeClass = 'status-not-started';
+                if (course.status === 'In Progress') badgeClass = 'status-in-progress';
+                if (course.status === 'Completed') badgeClass = 'status-completed';
+
+                // Create a card element
+                const card = document.createElement('div');
+                card.className = 'course-card';
+
+                card.innerHTML =
+                    '<h3>' + course.name + '</h3>' +
+                    '<span class="status-badge ' + badgeClass + '">' + course.status + '</span>' +
+                    '<p>' + course.description + '</p>' +
+                    '<div class="card-date">Target: ' + course.target_date + '</div>' +
+                    '<div class="card-actions">' +
+                        '<button class="btn-edit" onclick="openModal(true, ' + course.id + ')">Edit</button>' +
+                        '<button class="btn-delete" onclick="handleDelete(' + course.id + ')">Remove</button>' +
+                    '</div>';
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Update the stats boxes
+        function updateStats(courses) {
+            document.getElementById('statTotal').textContent = courses.length;
+            document.getElementById('statNotStarted').textContent =
+                courses.filter(function(c) { return c.status === 'Not Started'; }).length;
+            document.getElementById('statInProgress').textContent =
+                courses.filter(function(c) { return c.status === 'In Progress'; }).length;
+            document.getElementById('statCompleted').textContent =
+                courses.filter(function(c) { return c.status === 'Completed'; }).length;
+        }
+
+        // ==========================================
+        // ADD / EDIT COURSE (Form Submit)
+        // ==========================================
+        async function handleFormSubmit(event) {
+            event.preventDefault();  // Stop the page from refreshing
+
+            // Collect data from the form
+            const courseData = {
+                name: document.getElementById('courseName').value,
+                description: document.getElementById('courseDesc').value,
+                target_date: document.getElementById('courseDate').value,
+                status: document.getElementById('courseStatus').value
+            };
+
+            // Decide URL and method based on Add vs Edit mode
+            let url = API_URL;
+            let method = 'POST';
+
+            if (isEditMode) {
+                const id = document.getElementById('courseId').value;
+                url = API_URL + '/' + id;
+                method = 'PUT';
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(courseData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Something went wrong.');
+                }
+
+                showToast(isEditMode ? 'Course updated!' : 'Course added!', 'success');
+                closeModal();
+                fetchCourses();  // Reload the grid
+
+            } catch (error) {
+                console.error(error);
+                showToast(error.message, 'error');
+            }
+        }
+
+        // ==========================================
+        // DELETE COURSE
+        // ==========================================
+        async function handleDelete(id) {
+            if (!confirm('Are you sure you want to delete this course?')) {
+                return;  // User clicked "Cancel"
+            }
+
+            try {
+                const response = await fetch(API_URL + '/' + id, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to delete.');
+                }
+
+                showToast('Course removed.', 'success');
+                fetchCourses();  // Reload the grid
+
+            } catch (error) {
+                console.error(error);
+                showToast(error.message, 'error');
+            }
+        }
+
+        // Expose handleDelete globally so onclick="handleDelete(...)" works
+        window.handleDelete = handleDelete;
+
+        // ==========================================
+        // MODAL (Open / Close the popup form)
+        // ==========================================
+        async function openModal(editing, courseId) {
+            isEditMode = editing;
+            const form = document.getElementById('courseForm');
+            form.reset();  // Clear old form data
+
+            if (editing && courseId) {
+                // Fetch the course data to pre-fill the form
+                document.getElementById('modalTitle').textContent = 'Edit Course';
+                try {
+                    const response = await fetch(API_URL + '/' + courseId);
+                    const course = await response.json();
+                    document.getElementById('courseId').value = course.id;
+                    document.getElementById('courseName').value = course.name;
+                    document.getElementById('courseDesc').value = course.description;
+                    document.getElementById('courseDate').value = course.target_date;
+                    document.getElementById('courseStatus').value = course.status;
+                } catch (error) {
+                    showToast('Could not load course data.', 'error');
+                    return;
+                }
+            } else {
+                document.getElementById('modalTitle').textContent = 'Add New Course';
+            }
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ==========================================
+        // TOAST NOTIFICATION (small popup message)
+        // ==========================================
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+
+            // Auto-hide after 3 seconds
+            setTimeout(function() {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // ==========================================
+        // LOAD COURSES WHEN PAGE OPENS
+        // ==========================================
+        fetchCourses();
+    </script>
+
+</body>
+</html>
